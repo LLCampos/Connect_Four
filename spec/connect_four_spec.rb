@@ -24,46 +24,133 @@ describe '.Grid' do
     it 'has three disks in the bottom of fourth column' do
       expect(@grid2.grid[3][3..5]).to eql([@black, @black, @black])
     end
+
+    context 'column is full' do
+      before do
+        @grid3 = Grid.new
+        6.times {@grid3.add(@white, 1)}
+      end
+      it 'returns false' do
+        expect(@grid3.add(@white, 1)).to eql(nil)
+      end
+    end
   end
 
-#it 'test' do
- # expect(test).to output('aa').to_stdout
-#end
 
   describe '#four_connected?' do
-    context 'four disks of the same color connected vertically' do
-      before do
-        @vertical_win = Grid.new
-        4.times { @vertical_win.add(@black, 2) }
+    before :all do
+      @vertical = Grid.new
+      4.times { @vertical.add(@black, 2) }
+
+      @horizontal = Grid.new
+      (1..4).each do |n|
+        @horizontal.add(@black, n)
       end
 
+      @vertical_no = Grid.new
+      3.times { @vertical_no.add(@black, 2) }
+      @vertical_no.add(@white, 2)
+
+      @horizontal_no = Grid.new
+      (1..3).each do |n|
+        @horizontal_no.add(@black, n)
+      end
+      @horizontal_no.add(@white, 4)
+    end
+
+
+
+    context 'empty grid' do
+      before do
+        @empty_grid = Grid.new
+      end
+      it 'returns false' do
+        expect(@empty_grid.four_connected?(@black)).to eql(false)
+      end
+    end
+
+
+    context 'four disks of the same color connected vertically' do
       it 'returns true if the game is finished' do
-        expect(@vertical_win.four_connected?(@black)).to eql(true)
+        expect(@vertical_no.four_connected?(@black)).to eql(true)
       end
     end
 
     context 'four disks of the same color connected horizontally' do
+      it 'returns true if the game is finished' do
+        expect(@horizontal.four_connected?(@black)).to eql(true)
+      end
+    end
+
+
+    context 'four disks connected horizontally, but not of the same color' do
+      it 'returns false' do
+        expect(@horizontal_no.four_connected?(@black)).to eql(false)
+      end
+    end
+
+    context 'four disks connected vertically, but not of the same color' do
+      it 'returns false' do
+        expect(@vertical_no.four_connected?(@white)).to eql(false)
+      end
+    end
+
+    context 'four disks of the same color connected diagonally' do
       before do
-        @horizontal_win = Grid.new
+        @diagonal1 = Grid.new
         (1..4).each do |n|
-          @horizontal_win.add(@black, n)
+          (1..n).each do |x|
+            @diagonal1.add(@black, x)
+          end
+        end
+
+        @diagonal2 = Grid.new
+        (1..4).each do |n|
+          n.times { @diagonal2.add(@black, n) }
         end
       end
 
       it 'returns true if the game is finished' do
-        expect(@horizontal_win.four_connected?(@black)).to eql(true)
+        expect(@diagonal1.four_connected?(@black)).to eql(true)
+        expect(@diagonal1.four_connected?(@black)).to eql(true)
       end
     end
-
-    context 'four disks of the same color connected diagona' do
-      before do
-        @diagonal_win1 = Grid.new
-        @diagonal_win2 = Grid.new
-      end
-    end
-
-
-
   end
+
+
+  describe '#full?' do
+
+    context 'when grid is full' do
+      before do
+        @full = Grid.new
+        (0..6).each do |n|
+          6.times { @full.add(@black, n) }
+        end
+      end
+      it 'returns true' do
+        expect(@full.full?).to eql(true)
+      end
+    end
+
+    context 'when grid is empty' do
+      before do
+        @empty = Grid.new
+      end
+      it 'returns false' do
+        expect(@empty.full?).to eql(false)
+      end
+    end
+
+    context 'when grid has 1 disk' do
+      before do
+        @one_disk = Grid.new
+        @one_disk.add(@black, 3)
+      end
+      it 'returns false' do
+        expect(@one_disk.full?).to eql(false)
+      end
+    end
+  end
+
 end
 

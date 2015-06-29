@@ -14,7 +14,7 @@ class Grid
 
   # adds a disk to the column
   def add(color, column)
-    empty = [5,4,3,2,1,0].find do |n|
+    empty = [5, 4, 3, 2, 1, 0].find do |n|
       @grid[column][n] == ' '
     end
     empty.nil? ? nil : @grid[column][empty] = color
@@ -26,7 +26,7 @@ class Grid
 
   def four_connected_vertical?(disk)
     result = false
-    grid.each do |column|
+    @grid.each do |column|
       result = true if [column[2..5], column[1..4], column[0..3]].include?([disk] * 4)
     end
     result
@@ -34,8 +34,17 @@ class Grid
 
   def four_connected_horizontally?(disk)
     result = false
-    grid.transpose.each do |column|
+    @grid.transpose.each do |column|
       result = true if [column[2..5], column[1..4], column[0..3], column[3..6]].include?([disk] * 4)
+    end
+    result
+  end
+
+  # returns true if grid is full, false if it is not
+  def full?
+    result = true
+    @grid.each do |column|
+      result = false if column.include?(' ')
     end
     result
   end
