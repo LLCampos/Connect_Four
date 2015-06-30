@@ -23,7 +23,7 @@ class Grid
   end
 
   def four_connected?(disk)
-    four_connected_vertical?(disk) || four_connected_horizontally?(disk)
+    four_connected_vertical?(disk) || four_connected_horizontally?(disk) || four_connected_diagonally?(disk)
   end
 
   def four_connected_vertical?(disk)
@@ -34,12 +34,45 @@ class Grid
     result
   end
 
+
+
   def four_connected_horizontally?(disk)
     result = false
     @grid.transpose.each do |column|
       result = true if [column[2..5], column[1..4], column[0..3], column[3..6]].include?([disk] * 4)
     end
     result
+  end
+
+  # returns the diagonals (upper-left <-> bottom-right) with length 4
+  def diagonals
+    diag = grid.map.with_index do |column, indexc|
+      column.map.with_index do |_, indexp|
+        [0, 1, 2, 3].map do |n|
+          next if (a = indexc + n) > 6 || (b = indexp + n) > 5
+          grid[a][b]
+        end
+      end
+    end
+    diag.flatten(1).map(&:compact).select { |d| d.length == 4 }
+  end
+
+  # returns the diagonals (upper-right <-> bottom-left) with length 4
+  def other_diagonals
+    reverse_grid = grid.map(&:reverse)
+    diag = reverse_grid.map.with_index do |column, indexc|
+      column.map.with_index do |_, indexp|
+        [0, 1, 2, 3].map do |n|
+          next if (a = indexc + n) > 6 || (b = indexp + n) > 5
+          reverse_grid[a][b]
+        end
+      end
+    end
+    diag.flatten(1).map(&:compact).select { |d| d.length == 4 }
+  end
+
+  def four_connected_diagonally?(disk)
+    (diagonals + other_diagonals).include?([disk] * 4)
   end
 
   # returns true if grid is full, false if it is not
@@ -95,6 +128,7 @@ def new_game
   end
 end
 
+new_game
 
 
 

@@ -3,13 +3,12 @@ require 'connect_four.rb'
 describe '.Grid' do
 
   describe '.new' do
-    it  'returns an empty grid' do
+    it 'returns an empty grid' do
       expect(Grid.new.grid).to eq([[' '] * 6] * 7)
     end
   end
 
   describe '#add' do
-
     before do
       @grid1 = Grid.new
       @grid1.add('white', 1)
@@ -28,14 +27,13 @@ describe '.Grid' do
     context 'column is full' do
       before do
         @grid3 = Grid.new
-        6.times {@grid3.add('white', 1)}
+        6.times { @grid3.add('white', 1) }
       end
       it 'returns false' do
         expect(@grid3.add('white', 1)).to eql(nil)
       end
     end
   end
-
 
   describe '#four_connected?' do
     before :all do
@@ -57,6 +55,20 @@ describe '.Grid' do
       end
       @horizontal_no.add('white', 4)
 
+      @diagonal1 = Grid.new
+      (1..4).each do |n|
+        (1..n).each do |x|
+          @diagonal1.add('black', x)
+        end
+      end
+      @diagonal1.grid[1][5] = 'white'
+
+
+      @diagonal2 = Grid.new
+      (1..4).each do |n|
+        n.times { @diagonal2.add('black', n) }
+      end
+      @diagonal2.grid[4][5] = 'white'
     end
 
     context 'empty grid' do
@@ -94,23 +106,24 @@ describe '.Grid' do
     end
 
     context 'four disks of the same color connected diagonally' do
-      before do
-        @diagonal1 = Grid.new
-        (1..4).each do |n|
-          (1..n).each do |x|
-            @diagonal1.add('black', x)
-          end
-        end
 
-        @diagonal2 = Grid.new
-        (1..4).each do |n|
-          n.times { @diagonal2.add('black', n) }
-        end
+      it 'returns true if four connected diagonally' do
+        expect(@diagonal1.four_connected?('black')).to eql(true)
+        expect(@diagonal2.four_connected?('black')).to eql(true)
       end
 
-      it 'returns true if the game is finished' do
-        expect(@diagonal1.four_connected?('black')).to eql(true)
-        expect(@diagonal1.four_connected?('black')).to eql(true)
+    end
+
+    context 'four disks of different color connected diagonally' do
+
+      before do
+        @diagonal1.grid[4][5] = 'white'
+        @diagonal2.grid[1][5] = 'white'
+      end
+
+      it 'returns true if not four connected diagonally' do
+        expect(@diagonal1.four_connected?('black')).to eql(false)
+        expect(@diagonal2.four_connected?('black')).to eql(false)
       end
     end
   end
@@ -149,6 +162,5 @@ describe '.Grid' do
       end
     end
   end
-
 end
 
