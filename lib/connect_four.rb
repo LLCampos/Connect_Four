@@ -7,6 +7,7 @@ class Grid
 
   # show the grid to the user
   def show
+    puts "  " + [1, 2, 3, 4, 5, 6, 7].join('   ')
     @grid.transpose.each do |line|
       puts '| ' + line.join(' | ') + ' |'
     end
@@ -51,14 +52,15 @@ class Grid
 
 end
 
-
-
 @white = "\u{25CF}"
 @black = "\u{25EF}"
 
-
-#6.times do puts '| ' + ([''] * 7).join(' | ') + ' |' end
-
+def new_game
+  game = Grid.new
+  puts "Welcome to Connect Four :D"
+  puts "Player 1 will play with the Black disks and Player 2 with the White disks\n\n"
+  game.show
+end
 
 
 

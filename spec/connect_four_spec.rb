@@ -69,7 +69,6 @@ describe '.Grid' do
       end
     end
 
-
     context 'four disks of the same color connected vertically' do
       it 'returns true if the game is finished' do
         expect(@vertical.four_connected?('black')).to eql(true)
