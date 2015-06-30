@@ -9,8 +9,9 @@ class Grid
   def show
     puts "  " + [1, 2, 3, 4, 5, 6, 7].join('   ')
     @grid.transpose.each do |line|
-      puts '| ' + line.join(' | ') + ' |'
+      puts '| ' + line.join(' | ') + " |"
     end
+    puts "\n"
   end
 
   # adds a disk to the column
@@ -55,12 +56,46 @@ end
 @white = "\u{25CF}"
 @black = "\u{25EF}"
 
-def new_game
-  game = Grid.new
-  puts "Welcome to Connect Four :D"
-  puts "Player 1 will play with the Black disks and Player 2 with the White disks\n\n"
-  game.show
+def ask_user(player_number)
+  puts "Player #{player_number}, in which column do you want to put your disk?"
+  input = gets.chomp.to_i
+  unless [1, 2, 3, 4, 5, 6, 7].include?(input)
+    puts 'You have to insert in one of the columns!'
+    ask_user(player_number)
+  else
+    input
+  end
 end
+
+def turn(disk_color, player_number)
+  input = ask_user(player_number)
+  if @game.add(disk_color, input - 1).nil?
+    puts 'That column is already full, choose another!'
+    turn(disk_color, player_number)
+  end
+  @game.show
+  if @game.four_connected?(disk_color)
+    puts "Congratulations, Player #{player_number}, you won the game!\n\n"
+    new_game
+  elsif @game.full?
+    puts "It's a tie!"
+    new_game
+  end
+end
+
+def new_game
+  @game = Grid.new
+  puts "Welcome to Connect Four :D"
+  puts "Press CTRL + C anytime to finish your game session"
+  puts "Player 1 will play with the Black disks and Player 2 with the White disks\n\n"
+  @game.show
+  loop do
+    turn(@black, '1')
+    turn(@white, '2')
+  end
+end
+
+
 
 
 
